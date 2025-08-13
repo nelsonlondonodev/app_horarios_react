@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import { employees } from '../data/mockData';
+
+const ShiftForm = ({ onAddShift, onClose }) => {
+  const [employeeId, setEmployeeId] = useState('');
+  const [day, setDay] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [role, setRole] = useState('');
+
+  const roles = ['Camarera', 'Cocinero', 'Jefa de Sala', 'Barman', 'Ayudante de Cocina'];
+  const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!employeeId || !day || !startTime || !endTime || !role) {
+      alert('Por favor, complete todos los campos.');
+      return;
+    }
+
+    const newShift = {
+      id: Date.now(), // Simple unique ID
+      employeeId: parseInt(employeeId),
+      day,
+      startTime,
+      endTime,
+      role,
+    };
+    onAddShift(newShift);
+    onClose(); // Close form after submission
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Añadir Nuevo Turno</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="employee" className="block text-sm font-medium text-gray-700">Empleado:</label>
+            <select
+              id="employee"
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Seleccione un empleado</option>
+              {employees.map(emp => (
+                <option key={emp.id} value={emp.id}>{emp.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="day" className="block text-sm font-medium text-gray-700">Día:</label>
+            <select
+              id="day"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Seleccione un día</option>
+              {daysOfWeek.map(d => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">Hora de Inicio:</label>
+            <input
+              type="time"
+              id="startTime"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">Hora de Fin:</label>
+            <input
+              type="time"
+              id="endTime"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700">Rol:</label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Seleccione un rol</option>
+              {roles.map(r => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Añadir Turno
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ShiftForm;
