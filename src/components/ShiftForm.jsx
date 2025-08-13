@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { employees } from '../data/mockData';
 
-const ShiftForm = ({ onAddShift, onClose }) => {
+const ShiftForm = ({ onAddShift, onClose, employees }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [day, setDay] = useState('');
   const [startTime, setStartTime] = useState('');

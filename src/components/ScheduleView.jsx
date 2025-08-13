@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
-import { employees, shifts as initialShifts } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { shifts as initialShifts } from '../data/mockData';
 import ShiftCard from './ShiftCard';
 import Modal from './Modal';
 import { useDrop } from 'react-dnd';
 import ShiftForm from './ShiftForm';
 
-const ScheduleView = () => {
+const ScheduleView = ({ employees }) => {
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState(null);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
-  const [currentShifts, setCurrentShifts] = useState(initialShifts);
+  const [currentShifts, setCurrentShifts] = useState(() => {
+    const savedShifts = localStorage.getItem('app_horarios_shifts');
+    return savedShifts ? JSON.parse(savedShifts) : initialShifts;
+  });
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('app_horarios_shifts', JSON.stringify(currentShifts));
+  }, [currentShifts]);
 
   const openModal = (shift, employeeName) => {
     setSelectedShift(shift);
@@ -44,7 +51,9 @@ const ScheduleView = () => {
   };
 
   // Create a map for quick employee lookup
-  const employeeMap = new Map(employees.map(emp => [emp.id, emp.name]));
+  const employeeMap = React.useMemo(() => {
+    return new Map(employees.map(emp => [emp.id, emp.name]));
+  }, [employees]);
 
   return (
     <div className="bg-white shadow p-6 rounded-lg">
@@ -103,8 +112,8 @@ const ScheduleView = () => {
                       <ShiftCard
                         key={shift.id}
                         shift={shift}
-                        employeeName={employee.name}
-                        onClick={() => openModal(shift, employee.name)}
+                        employeeName={employeeMap.get(shift.employeeId)}
+                        onClick={() => openModal(shift, employeeMap.get(shift.employeeId))}
                       />
                     ))}
                   </div>
@@ -128,6 +137,7 @@ const ScheduleView = () => {
         <ShiftForm
           onAddShift={handleAddShift}
           onClose={closeForm}
+          employees={employees}
         />
       )}
     </div>

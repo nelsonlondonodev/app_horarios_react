@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { employees as initialEmployees } from '../data/mockData';
 import UserForm from './UserForm';
 
-const UserManagement = () => {
-  const [users, setUsers] = useState(initialEmployees);
+const UserManagement = ({ employees, setEmployees }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const openForm = () => setIsFormOpen(true);
   const closeForm = () => setIsFormOpen(false);
 
   const handleAddUser = (newUser) => {
-    setUsers((prevUsers) => [...prevUsers, newUser]);
+    setEmployees((prevEmployees) => [...prevEmployees, newUser]);
   };
 
   return (
@@ -34,7 +32,7 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
+            {employees.map((user) => (
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
