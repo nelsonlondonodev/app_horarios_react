@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ShiftCard = ({ shift, employeeName }) => {
+const ShiftCard = ({ shift, employeeName, onClick }) => {
   const getRoleColor = (role) => {
     switch (role) {
       case 'Camarera':
@@ -19,7 +19,10 @@ const ShiftCard = ({ shift, employeeName }) => {
   };
 
   return (
-    <div className={`p-3 rounded-lg shadow-sm mb-2 ${getRoleColor(shift.role)}`}>
+    <div
+      onClick={onClick}
+      className={`p-3 rounded-lg shadow-sm mb-2 ${getRoleColor(shift.role)} cursor-pointer hover:opacity-80 transition-opacity`}
+    >
       <p className="font-semibold text-sm">{employeeName}</p>
       <p className="text-xs">{shift.startTime} - {shift.endTime}</p>
       <p className="text-xs italic">{shift.role}</p>

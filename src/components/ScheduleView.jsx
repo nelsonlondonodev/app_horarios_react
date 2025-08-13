@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { employees, shifts } from '../data/mockData';
 import ShiftCard from './ShiftCard';
+import Modal from './Modal';
 
 const ScheduleView = () => {
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedShift, setSelectedShift] = useState(null);
+  const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
+
+  const openModal = (shift, employeeName) => {
+    setSelectedShift(shift);
+    setSelectedEmployeeName(employeeName);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedShift(null);
+    setSelectedEmployeeName('');
+  };
 
   // Create a map for quick employee lookup
   const employeeMap = new Map(employees.map(emp => [emp.id, emp.name]));
@@ -37,6 +54,7 @@ const ScheduleView = () => {
                         key={shift.id}
                         shift={shift}
                         employeeName={employee.name}
+                        onClick={() => openModal(shift, employee.name)}
                       />
                     ))}
                 </div>
@@ -45,6 +63,15 @@ const ScheduleView = () => {
           ))}
         </div>
       </div>
+
+      {selectedShift && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          shift={selectedShift}
+          employeeName={selectedEmployeeName}
+        />
+      )}
     </div>
   );
 };
