@@ -5,7 +5,7 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-transparent flex flex-col">
       {/* Navbar placeholder */}
       <header className="bg-amber-50 shadow p-4">
-        <nav className="w-full max-w-7xl mx-auto flex justify-between items-center px-4">
+        <nav className="w-full flex justify-between items-center px-4">
           <h1 className="text-2xl font-bold text-stone-800">Gestión de Horarios</h1>
           {/* Navigation links will go here */}
         </nav>

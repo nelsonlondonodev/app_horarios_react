@@ -9,7 +9,7 @@ const ScheduleView = () => {
   const employeeMap = new Map(employees.map(emp => [emp.id, emp.name]));
 
   return (
-    <div className="bg-white shadow p-6 rounded-lg mx-auto max-w-7xl">
+    <div className="bg-white shadow p-6 rounded-lg">
       <h3 className="text-2xl font-semibold text-gray-700 mb-4">Vista Semanal de Horarios</h3>
 
       <div className="overflow-x-auto">

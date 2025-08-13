@@ -5,7 +5,7 @@ import ScheduleView from './components/ScheduleView';
 function App() {
   return (
     <Layout>
-      <div className="container mx-auto px-4">
+      <div className="px-4">
         <Header />
         <ScheduleView />
       </div>
