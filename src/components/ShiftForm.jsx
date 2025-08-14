@@ -5,24 +5,27 @@ const ShiftForm = ({ onAddShift, onClose, employees }) => {
   const [day, setDay] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [type, setType] = useState(''); // New state for shift type
   const [role, setRole] = useState('');
 
-  const roles = ['Camarera', 'Cocinero', 'Jefa de Sala', 'Barman', 'Ayudante de Cocina'];
+  const roles = ['Camarero', 'Cocinero', 'Jefe de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador']; // Updated roles
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const shiftTypes = ['Mañana', 'Tarde', 'Noche']; // New shift types
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!employeeId || !day || !startTime || !endTime || !role) {
+    if (!employeeId || !day || !startTime || !endTime || !type || !role) { // Validate all fields including type
       alert('Por favor, complete todos los campos.');
       return;
     }
 
     const newShift = {
-      id: Date.now(), // Simple unique ID
-      employeeId: parseInt(employeeId),
+      id: `sh${Date.now()}`, // Ensure ID is string to match existing IDs
+      employeeId, // Keep as string, remove parseInt
       day,
       startTime,
       endTime,
+      type, // Include type
       role,
     };
     onAddShift(newShift);
@@ -84,6 +87,22 @@ const ShiftForm = ({ onAddShift, onClose, employees }) => {
               onChange={(e) => setEndTime(e.target.value)}
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             />
+          </div>
+
+          {/* New Shift Type Field */}
+          <div>
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700">Tipo de Turno:</label>
+            <select
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="">Seleccione un tipo</option>
+              {shiftTypes.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
           </div>
 
           <div>
