@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { shifts as initialShifts } from '../data/mockData';
+
 import ShiftCard from './ShiftCard';
 import Modal from './Modal';
 import { useDrop } from 'react-dnd';
 import ShiftForm from './ShiftForm';
 
-const ScheduleView = ({ employees }) => {
+const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState(null);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
-  const [currentShifts, setCurrentShifts] = useState(() => {
-    const savedShifts = localStorage.getItem('app_horarios_shifts');
-    return savedShifts ? JSON.parse(savedShifts) : initialShifts;
-  });
+  const [selectedEmployeeColor, setSelectedEmployeeColor] = useState(''); // New state for color
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem('app_horarios_shifts', JSON.stringify(currentShifts));
-  }, [currentShifts]);
-
-  const openModal = (shift, employeeName) => {
+  const openModal = (shift, employeeName, employeeColor) => { // Added employeeColor parameter
     setSelectedShift(shift);
     setSelectedEmployeeName(employeeName);
+    setSelectedEmployeeColor(employeeColor); // Set color state
     setIsModalOpen(true);
   };
 
@@ -31,28 +25,28 @@ const ScheduleView = ({ employees }) => {
     setIsModalOpen(false);
     setSelectedShift(null);
     setSelectedEmployeeName('');
+    setSelectedEmployeeColor(''); // Clear color state
   };
 
   const openForm = () => setIsFormOpen(true);
   const closeForm = () => setIsFormOpen(false);
 
   const handleDrop = (shiftId, newEmployeeId, newDay) => {
-    setCurrentShifts((prevShifts) =>
-      prevShifts.map((shift) =>
-        shift.id === shiftId
-          ? { ...shift, employeeId: newEmployeeId, day: newDay }
-          : shift
-      )
+    const updatedShifts = currentShifts.map((shift) =>
+      shift.id === shiftId
+        ? { ...shift, employeeId: newEmployeeId, day: newDay }
+        : shift
     );
+    onUpdateShifts(updatedShifts);
   };
 
   const handleAddShift = (newShift) => {
-    setCurrentShifts((prevShifts) => [...prevShifts, newShift]);
+    onUpdateShifts([...currentShifts, newShift]);
   };
 
   // Create a map for quick employee lookup
   const employeeMap = React.useMemo(() => {
-    return new Map(employees.map(emp => [emp.id, emp.name]));
+    return new Map(employees.map(emp => [emp.id, { name: emp.name, color: emp.color }]));
   }, [employees]);
 
   return (
@@ -112,8 +106,9 @@ const ScheduleView = ({ employees }) => {
                       <ShiftCard
                         key={shift.id}
                         shift={shift}
-                        employeeName={employeeMap.get(shift.employeeId)}
-                        onClick={() => openModal(shift, employeeMap.get(shift.employeeId))}
+                        employeeName={employeeMap.get(shift.employeeId).name}
+                        employeeColor={employeeMap.get(shift.employeeId).color}
+                        onClick={() => openModal(shift, employeeMap.get(shift.employeeId).name, employeeMap.get(shift.employeeId).color)}
                       />
                     ))}
                   </div>

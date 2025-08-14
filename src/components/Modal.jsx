@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, shift, employeeName }) => {
+const Modal = ({ isOpen, onClose, shift, employeeName, employeeColor }) => {
   if (!isOpen) return null;
 
   return (
@@ -8,7 +8,7 @@ const Modal = ({ isOpen, onClose, shift, employeeName }) => {
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Detalles del Turno</h3>
         <div className="space-y-2">
-          <p><span className="font-semibold">Empleado:</span> {employeeName}</p>
+          <p className="flex items-center"><span className="font-semibold">Empleado:</span> {employeeName} <span className="ml-2 w-4 h-4 rounded-full" style={{ backgroundColor: employeeColor }}></span></p>
           <p><span className="font-semibold">Día:</span> {shift.day}</p>
           <p><span className="font-semibold">Hora de Inicio:</span> {shift.startTime}</p>
           <p><span className="font-semibold">Hora de Fin:</span> {shift.endTime}</p>

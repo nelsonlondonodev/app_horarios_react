@@ -1,0 +1,60 @@
+# Sugerencias para Mejorar la Aplicación de Horarios
+
+Aquí está el listado de sugerencias para mejorar y completar el proyecto.
+
+### 1. Gestión de Datos y Estado
+
+El objetivo es centralizar la lógica de estado para facilitar el mantenimiento y evitar el "prop drilling".
+
+*   **Sugerencia 1: Centralizar el Estado con Context API o Zustand.**
+    *   **Por qué:** Evitarás pasar props a través de muchos niveles de componentes y tendrás una única fuente de verdad para tus datos (turnos y empleados).
+    *   **Cómo (Context API):**
+        1.  Crear un `AppContext.jsx` que provea un contexto con `employees`, `shifts` y las funciones para modificarlos (`addShift`, `updateShift`, `addUser`, etc.).
+        2.  Envolver el componente `App` en este proveedor de contexto.
+        3.  Usar el hook `useContext` en los componentes que necesiten acceder o modificar el estado.
+    *   **Alternativa:** `Zustand` es una librería de manejo de estado más ligera y simple.
+
+### 2. Funcionalidad y Experiencia de Usuario (UX)
+
+Añadir características para que la aplicación sea más útil en un escenario real.
+
+*   **Sugerencia 2: Implementar Funcionalidad Completa de CRUD (Crear, Leer, Actualizar, Eliminar).**
+    *   **Por qué:** Faltan las operaciones de editar y eliminar para usuarios y turnos.
+    *   **Cómo:**
+        *   **Usuarios:** En `UserManagement.jsx`, hacer que los botones "Editar" y "Eliminar" sean funcionales. "Editar" abriría un modal con los datos del usuario. "Eliminar" pediría confirmación.
+        *   **Turnos:** El modal que se abre al hacer clic en un `ShiftCard` podría tener botones de "Editar" y "Eliminar".
+
+*   **Sugerencia 3: Añadir Navegación por Semanas.**
+    *   **Por qué:** Para poder consultar horarios de semanas pasadas y futuras.
+    *   **Cómo:**
+        1.  Añadir un estado para la semana actual (p. ej., `currentWeek`).
+        2.  Añadir botones "Semana Anterior" / "Siguiente Semana".
+        3.  Modificar el modelo de datos para que `day` sea una fecha completa (ej. `'2025-08-11'`) en lugar de solo el nombre del día.
+
+*   **Sugerencia 4: Mejorar la Vista de Horarios.**
+    *   **Por qué:** Para que la cuadrícula sea más visual e informativa.
+    *   **Cómo:**
+        *   **Colores por Rol/Tipo de Turno:** Asignar colores de fondo a los `ShiftCard` según el rol o tipo de turno.
+        *   **Resumen de Horas:** Calcular y mostrar las horas totales trabajadas por cada empleado en la semana.
+
+### 3. Calidad del Código y Mantenibilidad
+
+Mejorar la estructura y robustez del código.
+
+*   **Sugerencia 5: Introducir Rutas con `react-router-dom`.**
+    *   **Por qué:** Usar un enrutador es una práctica estándar que proporciona URLs únicas para cada vista (`/schedule`, `/users`).
+    *   **Cómo:**
+        1.  Instalar `react-router-dom`.
+        2.  Configurar las rutas en `App.jsx` o `main.jsx`.
+        3.  Usar el componente `<Link>` para la navegación en el `Header`.
+
+*   **Sugerencia 6: Añadir Validación de Formularios.**
+    *   **Por qué:** Para prevenir la entrada de datos incorrectos.
+    *   **Cómo:** Antes de enviar un formulario, comprobar que los campos requeridos no estén vacíos y mostrar mensajes de error si es necesario.
+
+### Plan de Acción Recomendado
+
+1.  **Prioridad Alta:** Implementar el CRUD completo para usuarios y turnos.
+2.  **Prioridad Media:** Refactorizar el manejo de estado (Context API o Zustand).
+3.  **Prioridad Media:** Añadir `react-router-dom`.
+4.  **Prioridad Baja:** Implementar la navegación por semanas y las mejoras visuales.

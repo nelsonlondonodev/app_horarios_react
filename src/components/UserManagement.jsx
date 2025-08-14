@@ -1,21 +1,41 @@
 import React, { useState } from 'react';
 import UserForm from './UserForm';
 
-const UserManagement = ({ employees, setEmployees }) => {
+const UserManagement = ({ employees, setEmployees, onDeleteEmployee }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
-  const openForm = () => setIsFormOpen(true);
-  const closeForm = () => setIsFormOpen(false);
+  const openForm = (user = null) => {
+    setEditingUser(user);
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingUser(null);
+  };
 
   const handleAddUser = (newUser) => {
     setEmployees((prevEmployees) => [...prevEmployees, newUser]);
+  };
+
+  const handleUpdateUser = (updatedUser) => {
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((emp) => (emp.id === updatedUser.id ? updatedUser : emp))
+    );
+  };
+
+  const handleDeleteUser = (userId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este usuario? Esta acción también eliminará sus turnos asignados.')) {
+      onDeleteEmployee(userId);
+    }
   };
 
   return (
     <div className="p-6 bg-white shadow rounded-lg">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Gestión de Usuarios</h2>
       <button
-        onClick={openForm}
+        onClick={() => openForm()} // Open form for new user
         className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         Añadir Nuevo Usuario
@@ -38,8 +58,8 @@ const UserManagement = ({ employees, setEmployees }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
-                  <button className="text-red-600 hover:text-red-900">Eliminar</button>
+                  <button onClick={() => openForm(user)} className="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
+                  <button onClick={() => handleDeleteUser(user.id)} className="text-red-600 hover:text-red-900">Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -50,7 +70,9 @@ const UserManagement = ({ employees, setEmployees }) => {
       {isFormOpen && (
         <UserForm
           onAddUser={handleAddUser}
+          onUpdateUser={handleUpdateUser}
           onClose={closeForm}
+          existingUser={editingUser}
         />
       )}
     </div>

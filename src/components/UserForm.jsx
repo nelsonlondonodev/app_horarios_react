@@ -1,31 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const UserForm = ({ onAddUser, onClose }) => {
+const UserForm = ({ onAddUser, onClose, existingUser, onUpdateUser }) => {
+  const isEditing = !!existingUser;
+
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const [color, setColor] = useState(''); // New state for color
 
-  const roles = ['Camarera', 'Cocinero', 'Jefa de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador'];
+  useEffect(() => {
+    if (isEditing) {
+      setName(existingUser.name);
+      setRole(existingUser.role);
+      setColor(existingUser.color || ''); // Initialize color for editing
+    }
+  }, [isEditing, existingUser]);
+
+  const roles = ['Camarero', 'Cocinero', 'Jefe de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador'];
+  const colorOptions = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FED766', '#28B463', '#BB8FCE', '#F39C12', '#E74C3C']; // Predefined colors
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name || !role) {
+    if (!name || !role || !color) { // Validate color as well
       alert('Por favor, complete todos los campos.');
       return;
     }
 
-    const newUser = {
-      id: `emp${Date.now()}`, // Simple unique ID
-      name,
-      role,
-    };
-    onAddUser(newUser);
+    if (isEditing) {
+      onUpdateUser({ ...existingUser, name, role, color }); // Include color in update
+    } else {
+      const newUser = {
+        id: `emp${Date.now()}`,
+        name,
+        role,
+        color, // Include color in new user
+      };
+      onAddUser(newUser);
+    }
     onClose(); // Close form after submission
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-        <h3 className="text-2xl font-bold mb-4 text-gray-800">Añadir Nuevo Usuario</h3>
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">{isEditing ? 'Editar Usuario' : 'Añadir Nuevo Usuario'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre:</label>
@@ -53,6 +70,23 @@ const UserForm = ({ onAddUser, onClose }) => {
             </select>
           </div>
 
+          {/* New Color Selection Field */}
+          <div>
+            <label htmlFor="color" className="block text-sm font-medium text-gray-700">Color:</label>
+            <select
+              id="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              style={{ backgroundColor: color }} // Only background color
+            >
+              <option value="" style={{ color: 'black' }}>Seleccione un color</option> {/* Ensure default text is black */}
+              {colorOptions.map(c => (
+                <option key={c} value={c} style={{ backgroundColor: c, color: 'white' }}>{c}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="flex justify-end space-x-3">
             <button
               type="button"
@@ -65,7 +99,7 @@ const UserForm = ({ onAddUser, onClose }) => {
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Añadir Usuario
+              {isEditing ? 'Actualizar Usuario' : 'Añadir Usuario'}
             </button>
           </div>
         </form>
