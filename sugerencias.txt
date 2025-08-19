@@ -6,7 +6,7 @@ Aquí está el listado de sugerencias para mejorar y completar el proyecto.
 
 El objetivo es centralizar la lógica de estado para facilitar el mantenimiento y evitar el "prop drilling".
 
-*   **Sugerencia 1: Centralizar el Estado con Context API o Zustand.**
+*   **Sugerencia 1: Centralizar el Estado con Context API o Zustand. [HECHO]**
     *   **Por qué:** Evitarás pasar props a través de muchos niveles de componentes y tendrás una única fuente de verdad para tus datos (turnos y empleados).
     *   **Cómo (Context API):**
         1.  Crear un `AppContext.jsx` que provea un contexto con `employees`, `shifts` y las funciones para modificarlos (`addShift`, `updateShift`, `addUser`, etc.).
@@ -18,7 +18,7 @@ El objetivo es centralizar la lógica de estado para facilitar el mantenimiento 
 
 Añadir características para que la aplicación sea más útil en un escenario real.
 
-*   **Sugerencia 2: Implementar Funcionalidad Completa de CRUD (Crear, Leer, Actualizar, Eliminar).**
+*   **Sugerencia 2: Implementar Funcionalidad Completa de CRUD (Crear, Leer, Actualizar, Eliminar). [HECHO]**
     *   **Por qué:** Faltan las operaciones de editar y eliminar para usuarios y turnos.
     *   **Cómo:**
         *   **Usuarios:** En `UserManagement.jsx`, hacer que los botones "Editar" y "Eliminar" sean funcionales. "Editar" abriría un modal con los datos del usuario. "Eliminar" pediría confirmación.
