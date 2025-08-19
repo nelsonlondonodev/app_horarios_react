@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
+import { useAppContext } from '../context/AppContext'; // Import useAppContext
 
-const ShiftForm = ({ onAddShift, onClose, employees }) => {
+const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddShift, added existingShift
+  const { addShift, updateShift } = useAppContext(); // Get from context
+  const isEditing = !!existingShift;
+
   const [employeeId, setEmployeeId] = useState('');
   const [day, setDay] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [type, setType] = useState(''); // New state for shift type
   const [role, setRole] = useState('');
+
+  useEffect(() => {
+    if (isEditing) {
+      setEmployeeId(existingShift.employeeId);
+      setDay(existingShift.day);
+      setStartTime(existingShift.startTime);
+      setEndTime(existingShift.endTime);
+      setType(existingShift.type);
+      setRole(existingShift.role);
+    }
+  }, [isEditing, existingShift]);
 
   const roles = ['Camarero', 'Cocinero', 'Jefe de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador']; // Updated roles
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -19,16 +34,20 @@ const ShiftForm = ({ onAddShift, onClose, employees }) => {
       return;
     }
 
-    const newShift = {
-      id: `sh${Date.now()}`, // Ensure ID is string to match existing IDs
-      employeeId, // Keep as string, remove parseInt
-      day,
-      startTime,
-      endTime,
-      type, // Include type
-      role,
-    };
-    onAddShift(newShift);
+    if (isEditing) {
+      updateShift({ ...existingShift, employeeId, day, startTime, endTime, type, role }); // Use updateShift from context
+    } else {
+      const newShift = {
+        id: `sh${Date.now()}`, // Ensure ID is string to match existing IDs
+        employeeId, // Keep as string, remove parseInt
+        day,
+        startTime,
+        endTime,
+        type, // Include type
+        role,
+      };
+      addShift(newShift); // Use addShift from context
+    }
     onClose(); // Close form after submission
   };
 

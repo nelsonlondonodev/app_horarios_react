@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useAppContext } from '../context/AppContext'; // Import useAppContext
 
-const UserForm = ({ onAddUser, onClose, existingUser, onUpdateUser }) => {
+const UserForm = ({ onClose, existingUser }) => { // Removed onAddUser, onUpdateUser from props
+  const { addEmployee, updateEmployee } = useAppContext(); // Get from context
   const isEditing = !!existingUser;
 
   const [name, setName] = useState('');
@@ -26,7 +28,7 @@ const UserForm = ({ onAddUser, onClose, existingUser, onUpdateUser }) => {
     }
 
     if (isEditing) {
-      onUpdateUser({ ...existingUser, name, role, color }); // Include color in update
+      updateEmployee({ ...existingUser, name, role, color }); // Use updateEmployee from context
     } else {
       const newUser = {
         id: `emp${Date.now()}`,
@@ -34,7 +36,7 @@ const UserForm = ({ onAddUser, onClose, existingUser, onUpdateUser }) => {
         role,
         color, // Include color in new user
       };
-      onAddUser(newUser);
+      addEmployee(newUser);
     }
     onClose(); // Close form after submission
   };

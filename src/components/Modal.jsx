@@ -1,7 +1,17 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext'; // Import useAppContext
 
-const Modal = ({ isOpen, onClose, shift, employeeName, employeeColor }) => {
+const Modal = ({ isOpen, onClose, shift, employeeName, employeeColor, onEdit }) => { // Added onEdit prop
   if (!isOpen) return null;
+
+  const { deleteShift } = useAppContext(); // Get deleteShift from context
+
+  const handleDelete = () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este turno?')) {
+      deleteShift(shift.id);
+      onClose(); // Close modal after deletion
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
@@ -14,12 +24,26 @@ const Modal = ({ isOpen, onClose, shift, employeeName, employeeColor }) => {
           <p><span className="font-semibold">Hora de Fin:</span> {shift.endTime}</p>
           <p><span className="font-semibold">Rol:</span> {shift.role}</p>
         </div>
-        <button
-          onClick={onClose}
-          className="mt-6 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Cerrar
-        </button>
+        <div className="flex justify-end space-x-3 mt-6">
+          <button
+            onClick={() => { onEdit(shift); onClose(); }} // Call onEdit and close modal
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Editar
+          </button>
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Eliminar
+          </button>
+          <button
+            onClick={onClose}
+            className="border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import UserForm from './UserForm';
+import { useAppContext } from '../context/AppContext'; // Import useAppContext
 
-const UserManagement = ({ employees, setEmployees, onDeleteEmployee }) => {
-  const [isFormOpen, setIsFormOpen] = useState(false);
+const UserManagement = () => { // Removed props
+  const { employees, addEmployee, updateEmployee, deleteEmployee } = useAppContext(); // Get from context
+  const [isFormOpen, setIsFormOpen] = useState(false); // Fixed typo
   const [editingUser, setEditingUser] = useState(null);
 
   const openForm = (user = null) => {
@@ -15,19 +17,12 @@ const UserManagement = ({ employees, setEmployees, onDeleteEmployee }) => {
     setEditingUser(null);
   };
 
-  const handleAddUser = (newUser) => {
-    setEmployees((prevEmployees) => [...prevEmployees, newUser]);
-  };
-
-  const handleUpdateUser = (updatedUser) => {
-    setEmployees((prevEmployees) =>
-      prevEmployees.map((emp) => (emp.id === updatedUser.id ? updatedUser : emp))
-    );
-  };
+  // handleAddUser and handleUpdateUser are no longer needed here,
+  // as UserForm will directly use addEmployee and updateEmployee from context.
 
   const handleDeleteUser = (userId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este usuario? Esta acción también eliminará sus turnos asignados.')) {
-      onDeleteEmployee(userId);
+      deleteEmployee(userId); // Use deleteEmployee from context
     }
   };
 
@@ -69,8 +64,6 @@ const UserManagement = ({ employees, setEmployees, onDeleteEmployee }) => {
 
       {isFormOpen && (
         <UserForm
-          onAddUser={handleAddUser}
-          onUpdateUser={handleUpdateUser}
           onClose={closeForm}
           existingUser={editingUser}
         />

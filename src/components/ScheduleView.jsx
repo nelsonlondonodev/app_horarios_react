@@ -4,8 +4,10 @@ import ShiftCard from './ShiftCard';
 import Modal from './Modal';
 import { useDrop } from 'react-dnd';
 import ShiftForm from './ShiftForm';
+import { useAppContext } from '../context/AppContext'; // Import useAppContext
 
-const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
+const ScheduleView = () => { // Removed props
+  const { employees, shifts, setShifts, addShift, updateShift, deleteShift } = useAppContext(); // Get from context
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +15,7 @@ const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
   const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
   const [selectedEmployeeColor, setSelectedEmployeeColor] = useState(''); // New state for color
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingShift, setEditingShift] = useState(null); // New state for editing shift
 
   const openModal = (shift, employeeName, employeeColor) => { // Added employeeColor parameter
     setSelectedShift(shift);
@@ -28,21 +31,25 @@ const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
     setSelectedEmployeeColor(''); // Clear color state
   };
 
-  const openForm = () => setIsFormOpen(true);
-  const closeForm = () => setIsFormOpen(false);
+  const openForm = (shift = null) => { // Modified to accept shift for editing
+    setEditingShift(shift);
+    setIsFormOpen(true);
+  };
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingShift(null);
+  };
 
   const handleDrop = (shiftId, newEmployeeId, newDay) => {
-    const updatedShifts = currentShifts.map((shift) =>
+    const updatedShifts = shifts.map((shift) => // Use shifts from context
       shift.id === shiftId
         ? { ...shift, employeeId: newEmployeeId, day: newDay }
         : shift
     );
-    onUpdateShifts(updatedShifts);
+    setShifts(updatedShifts); // Use setShifts from context
   };
 
-  const handleAddShift = (newShift) => {
-    onUpdateShifts([...currentShifts, newShift]);
-  };
+  // handleAddShift is no longer needed here, ShiftForm will use addShift from context.
 
   // Create a map for quick employee lookup
   const employeeMap = React.useMemo(() => {
@@ -100,7 +107,7 @@ const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
                     ref={drop}
                     className={`p-2 border border-gray-200 rounded-md min-h-[80px] ${backgroundColor}`}
                   >
-                    {currentShifts
+                    {shifts // Changed from currentShifts
                       .filter(shift => shift.employeeId === employee.id && shift.day === day)
                       .map(shift => (
                       <ShiftCard
@@ -125,14 +132,15 @@ const ScheduleView = ({ employees, currentShifts, onUpdateShifts }) => {
           onClose={closeModal}
           shift={selectedShift}
           employeeName={selectedEmployeeName}
+          onEdit={openForm} // Added onEdit prop
         />
       )}
 
       {isFormOpen && (
         <ShiftForm
-          onAddShift={handleAddShift}
           onClose={closeForm}
-          employees={employees}
+          existingShift={editingShift}
+          employees={employees} // Added employees prop
         />
       )}
     </div>
