@@ -41,14 +41,14 @@ Añadir características para que la aplicación sea más útil en un escenario 
 
 Mejorar la estructura y robustez del código.
 
-*   **Sugerencia 5: Introducir Rutas con `react-router-dom`.**
+*   **Sugerencia 5: Introducir Rutas con `react-router-dom`. [HECHO]**
     *   **Por qué:** Usar un enrutador es una práctica estándar que proporciona URLs únicas para cada vista (`/schedule`, `/users`).
     *   **Cómo:**
         1.  Instalar `react-router-dom`.
         2.  Configurar las rutas en `App.jsx` o `main.jsx`.
         3.  Usar el componente `<Link>` para la navegación en el `Header`.
 
-*   **Sugerencia 6: Añadir Validación de Formularios.**
+*   **Sugerencia 6: Añadir Validación de Formularios. [HECHO]**
     *   **Por qué:** Para prevenir la entrada de datos incorrectos.
     *   **Cómo:** Antes de enviar un formulario, comprobar que los campos requeridos no estén vacíos y mostrar mensajes de error si es necesario.
 
