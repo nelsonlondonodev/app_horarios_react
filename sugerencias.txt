@@ -24,14 +24,14 @@ Añadir características para que la aplicación sea más útil en un escenario 
         *   **Usuarios:** En `UserManagement.jsx`, hacer que los botones "Editar" y "Eliminar" sean funcionales. "Editar" abriría un modal con los datos del usuario. "Eliminar" pediría confirmación.
         *   **Turnos:** El modal que se abre al hacer clic en un `ShiftCard` podría tener botones de "Editar" y "Eliminar".
 
-*   **Sugerencia 3: Añadir Navegación por Semanas.**
+*   **Sugerencia 3: Añadir Navegación por Semanas. [HECHO]**
     *   **Por qué:** Para poder consultar horarios de semanas pasadas y futuras.
     *   **Cómo:**
         1.  Añadir un estado para la semana actual (p. ej., `currentWeek`).
         2.  Añadir botones "Semana Anterior" / "Siguiente Semana".
         3.  Modificar el modelo de datos para que `day` sea una fecha completa (ej. `'2025-08-11'`) en lugar de solo el nombre del día.
 
-*   **Sugerencia 4: Mejorar la Vista de Horarios.**
+*   **Sugerencia 4: Mejorar la Vista de Horarios. [HECHO]**
     *   **Por qué:** Para que la cuadrícula sea más visual e informativa.
     *   **Cómo:**
         *   **Colores por Rol/Tipo de Turno:** Asignar colores de fondo a los `ShiftCard` según el rol o tipo de turno.

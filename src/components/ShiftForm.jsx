@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect
-import { useAppContext } from '../context/AppContext'; // Import useAppContext
+import React, { useState, useEffect } from 'react';
+import { useAppContext } from '../context/AppContext';
 
-const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddShift, added existingShift
-  const { addShift, updateShift } = useAppContext(); // Get from context
+const formatDate = (date) => {
+  if (!date) return '';
+  return new Date(date).toISOString().split('T')[0];
+};
+
+const ShiftForm = ({ onClose, employees, existingShift, weekDays = [] }) => {
+  const { addShift, updateShift } = useAppContext();
   const isEditing = !!existingShift;
 
   const [employeeId, setEmployeeId] = useState('');
   const [day, setDay] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [type, setType] = useState(''); // New state for shift type
+  const [type, setType] = useState('');
   const [role, setRole] = useState('');
 
   useEffect(() => {
@@ -20,41 +25,43 @@ const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddS
       setEndTime(existingShift.endTime);
       setType(existingShift.type);
       setRole(existingShift.role);
+    } else if (weekDays.length > 0) {
+      // Set default day to the first day of the current week
+      setDay(formatDate(weekDays[0]));
     }
-  }, [isEditing, existingShift]);
+  }, [isEditing, existingShift, weekDays]);
 
-  const roles = ['Camarero', 'Cocinero', 'Jefe de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador']; // Updated roles
-  const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  const shiftTypes = ['Mañana', 'Tarde', 'Noche']; // New shift types
+  const roles = ['Camarero', 'Cocinero', 'Jefe de Sala', 'Barman', 'Ayudante de Cocina', 'Administrador'];
+  const shiftTypes = ['Mañana', 'Tarde', 'Noche'];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!employeeId || !day || !startTime || !endTime || !type || !role) { // Validate all fields including type
+    if (!employeeId || !day || !startTime || !endTime || !type || !role) {
       alert('Por favor, complete todos los campos.');
       return;
     }
 
+    const shiftData = {
+      employeeId,
+      day,
+      startTime,
+      endTime,
+      type,
+      role,
+    };
+
     if (isEditing) {
-      updateShift({ ...existingShift, employeeId, day, startTime, endTime, type, role }); // Use updateShift from context
+      updateShift({ ...existingShift, ...shiftData });
     } else {
-      const newShift = {
-        id: `sh${Date.now()}`, // Ensure ID is string to match existing IDs
-        employeeId, // Keep as string, remove parseInt
-        day,
-        startTime,
-        endTime,
-        type, // Include type
-        role,
-      };
-      addShift(newShift); // Use addShift from context
+      addShift({ ...shiftData, id: `sh${Date.now()}` });
     }
-    onClose(); // Close form after submission
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-        <h3 className="text-2xl font-bold mb-4 text-gray-800">Añadir Nuevo Turno</h3>
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">{isEditing ? 'Editar Turno' : 'Añadir Nuevo Turno'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="employee" className="block text-sm font-medium text-gray-700">Empleado:</label>
@@ -80,8 +87,10 @@ const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddS
               className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="">Seleccione un día</option>
-              {daysOfWeek.map(d => (
-                <option key={d} value={d}>{d}</option>
+              {weekDays.map(d => (
+                <option key={formatDate(d)} value={formatDate(d)}>
+                  {new Date(d).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'numeric' })}
+                </option>
               ))}
             </select>
           </div>
@@ -108,7 +117,6 @@ const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddS
             />
           </div>
 
-          {/* New Shift Type Field */}
           <div>
             <label htmlFor="type" className="block text-sm font-medium text-gray-700">Tipo de Turno:</label>
             <select
@@ -151,7 +159,7 @@ const ShiftForm = ({ onClose, employees, existingShift }) => { // Removed onAddS
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Añadir Turno
+              {isEditing ? 'Guardar Cambios' : 'Añadir Turno'}
             </button>
           </div>
         </form>

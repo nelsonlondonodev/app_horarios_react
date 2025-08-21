@@ -25,6 +25,8 @@ export const AppProvider = ({ children }) => {
     return savedEmployees ? JSON.parse(savedEmployees) : mockEmployees;
   });
 
+  const [currentDate, setCurrentDate] = useState(new Date());
+
   useEffect(() => {
     localStorage.setItem('app_horarios_employees', JSON.stringify(employees));
   }, [employees]);
@@ -61,17 +63,37 @@ export const AppProvider = ({ children }) => {
     setShifts((prevShifts) => prevShifts.filter((shift) => shift.employeeId !== employeeId));
   };
 
+  // Funciones para la navegación de semanas
+  const goToPreviousWeek = () => {
+    setCurrentDate((current) => {
+      const newDate = new Date(current);
+      newDate.setDate(current.getDate() - 7);
+      return newDate;
+    });
+  };
+
+  const goToNextWeek = () => {
+    setCurrentDate((current) => {
+      const newDate = new Date(current);
+      newDate.setDate(current.getDate() + 7);
+      return newDate;
+    });
+  };
+
   const value = {
     shifts,
-    setShifts, // Expose setShifts for direct updates like handleUpdateShifts
+    setShifts, 
     employees,
-    setEmployees, // Expose setEmployees for direct updates
+    setEmployees, 
     addShift,
     updateShift,
     deleteShift,
     addEmployee,
     updateEmployee,
     deleteEmployee,
+    currentDate,
+    goToPreviousWeek,
+    goToNextWeek,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
