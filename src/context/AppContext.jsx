@@ -7,6 +7,7 @@ export const AppContext = createContext();
 
 // 2. Crear el Proveedor del Contexto
 const AppProvider = ({ children }) => {
+  // --- ESTADO --- //
   const [shifts, setShifts] = useState(() => {
     const savedShifts = localStorage.getItem('app_horarios_shifts');
     return savedShifts ? JSON.parse(savedShifts) : mockShifts;
@@ -19,6 +20,12 @@ const AppProvider = ({ children }) => {
 
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('app_horarios_currentUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // --- EFECTOS --- //
   useEffect(() => {
     localStorage.setItem('app_horarios_employees', JSON.stringify(employees));
   }, [employees]);
@@ -27,7 +34,31 @@ const AppProvider = ({ children }) => {
     localStorage.setItem('app_horarios_shifts', JSON.stringify(shifts));
   }, [shifts]);
 
-  // Funciones para manipular los turnos
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('app_horarios_currentUser', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('app_horarios_currentUser');
+    }
+  }, [currentUser]);
+
+
+  // --- FUNCIONES DE AUTENTICACIÓN --- //
+  const login = (userId) => {
+    const user = employees.find((emp) => emp.id === userId);
+    if (user) {
+      setCurrentUser(user);
+    } else {
+      console.error("Intento de login con ID de usuario no válido:", userId);
+    }
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+
+  // --- FUNCIONES DE NEGOCIO --- //
   const addShift = (newShift) => {
     setShifts((prevShifts) => [...prevShifts, newShift]);
   };
@@ -40,7 +71,6 @@ const AppProvider = ({ children }) => {
     setShifts((prevShifts) => prevShifts.filter((shift) => shift.id !== shiftId));
   };
 
-  // Funciones para manipular los empleados
   const addEmployee = (newEmployee) => {
     setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
   };
@@ -51,11 +81,9 @@ const AppProvider = ({ children }) => {
   };
   const deleteEmployee = (employeeId) => {
     setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.id !== employeeId));
-    // Also delete shifts associated with this employee
     setShifts((prevShifts) => prevShifts.filter((shift) => shift.employeeId !== employeeId));
   };
 
-  // Funciones para la navegación de semanas
   const goToPreviousWeek = () => {
     setCurrentDate((current) => {
       const newDate = new Date(current);
@@ -72,7 +100,11 @@ const AppProvider = ({ children }) => {
     });
   };
 
+  // --- VALOR DEL CONTEXTO --- //
   const value = {
+    currentUser,
+    login,
+    logout,
     shifts,
     setShifts, 
     employees,

@@ -52,9 +52,27 @@ Mejorar la estructura y robustez del código.
     *   **Por qué:** Para prevenir la entrada de datos incorrectos.
     *   **Cómo:** Antes de enviar un formulario, comprobar que los campos requeridos no estén vacíos y mostrar mensajes de error si es necesario.
 
-### Plan de Acción Recomendado
+### Fase 2: Paneles por Roles (Administrador/Empleado)
 
-1.  **Prioridad Alta:** Implementar el CRUD completo para usuarios y turnos.
-2.  **Prioridad Media:** Refactorizar el manejo de estado (Context API o Zustand).
-3.  **Prioridad Media:** Añadir `react-router-dom`.
-4.  **Prioridad Baja:** Implementar la navegación por semanas y las mejoras visuales.
+El objetivo es expandir la aplicación para que tenga vistas y permisos diferentes según el rol del usuario.
+
+*   **Sugerencia 7: Simular Autenticación y Roles.**
+    *   **Por qué:** Es el primer paso para poder diferenciar entre un administrador y un empleado.
+    *   **Cómo:**
+        1.  Añadir un campo `role` ('admin' o 'employee') a los datos de los empleados en `mockData.js`.
+        2.  Crear una pantalla de "login" simple para seleccionar un usuario.
+        3.  Manejar el estado del `currentUser` en `AppContext`.
+
+*   **Sugerencia 8: Crear Vistas Separadas con Rutas.**
+    *   **Por qué:** Para que cada rol tenga su propia URL y vista dedicada.
+    *   **Cómo:**
+        1.  Usar `react-router-dom` para definir las rutas: `/`, `/admin/schedule`, `/admin/users`, `/employee/dashboard`.
+        2.  El componente `App.jsx` se convertirá en el enrutador principal.
+
+*   **Sugerencia 9: Implementar el Panel de Administrador.**
+    *   **Por qué:** Para consolidar las vistas de gestión existentes.
+    *   **Cómo:** Reutilizar `ScheduleView` y `UserManagement` dentro de un layout de administrador accesible a través de las rutas `/admin/*`.
+
+*   **Sugerencia 10: Implementar el Panel de Empleado.**
+    *   **Por qué:** Para que los empleados tengan una vista simplificada y personal.
+    *   **Cómo:** Crear un nuevo componente `EmployeeDashboard.jsx` que muestre solo los turnos del usuario actual en modo de solo lectura.

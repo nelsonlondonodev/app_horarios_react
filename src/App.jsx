@@ -4,8 +4,19 @@ import Layout from './components/Layout';
 import Header from './components/Header';
 import ScheduleView from './components/ScheduleView';
 import UserManagement from './components/UserManagement';
+import LoginView from './components/LoginView';
+import { useAppContext } from './context/useAppContext';
 
 function App() {
+  const { currentUser } = useAppContext();
+
+  // Si no hay usuario, mostrar la pantalla de login
+  if (!currentUser) {
+    return <LoginView />;
+  }
+
+  // Si hay un usuario, mostrar la aplicación principal
+  // (Más adelante, aquí diferenciaremos por rol)
   return (
     <Layout>
       <Header />
