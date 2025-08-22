@@ -1,10 +1,10 @@
 import React from 'react';
-import { useAppContext } from '../context/AppContext'; // Import useAppContext
+import { useAppContext } from '../context/useAppContext'; // Import useAppContext
 
 const Modal = ({ isOpen, onClose, shift, employeeName, employeeColor, onEdit }) => { // Added onEdit prop
-  if (!isOpen) return null;
-
   const { deleteShift } = useAppContext(); // Get deleteShift from context
+
+  if (!isOpen) return null;
 
   const handleDelete = () => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este turno?')) {

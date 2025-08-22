@@ -1,20 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { shifts as mockShifts, employees as mockEmployees } from '../data/mockData';
 
 // 1. Crear el Contexto
-const AppContext = createContext();
+// eslint-disable-next-line react-refresh/only-export-components
+export const AppContext = createContext();
 
-// 2. Crear el Hook personalizado para consumir el contexto
-export const useAppContext = () => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useAppContext debe ser usado dentro de un un AppProvider');
-  }
-  return context;
-};
-
-// 3. Crear el Proveedor del Contexto
-export const AppProvider = ({ children }) => {
+// 2. Crear el Proveedor del Contexto
+const AppProvider = ({ children }) => {
   const [shifts, setShifts] = useState(() => {
     const savedShifts = localStorage.getItem('app_horarios_shifts');
     return savedShifts ? JSON.parse(savedShifts) : mockShifts;
@@ -98,3 +90,5 @@ export const AppProvider = ({ children }) => {
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
+
+export default AppProvider;

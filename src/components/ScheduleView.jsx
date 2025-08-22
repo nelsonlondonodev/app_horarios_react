@@ -1,38 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { useDrop } from 'react-dnd';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '../context/useAppContext';
 import ShiftCard from './ShiftCard';
 import Modal from './Modal';
 import ShiftForm from './ShiftForm';
+import DayCell from './DayCell'; // Importar DayCell
+import { getStartOfWeek, getWeekDays, formatDate } from '../utils/dateUtils'; // Importar funciones de fecha
 
-// --- Constantes y Funciones de Ayuda ---
+// --- Constantes ---
 
 const SHIFT_TYPE_COLORS = {
   'Mañana': { bg: 'bg-sky-200', text: 'text-sky-800' },
   'Tarde': { bg: 'bg-amber-200', text: 'text-amber-800' },
   'Noche': { bg: 'bg-indigo-300', text: 'text-indigo-800' },
   default: { bg: 'bg-gray-200', text: 'text-gray-800' },
-};
-
-const getStartOfWeek = (date) => {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
-};
-
-const formatDate = (date) => {
-  return date.toISOString().split('T')[0];
-};
-
-const getWeekDays = (startDate) => {
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(startDate);
-    d.setDate(startDate.getDate() + i);
-    days.push(d);
-  }
-  return days;
 };
 
 const calculateHours = (startTime, endTime) => {
@@ -44,11 +24,10 @@ const calculateHours = (startTime, endTime) => {
       diff += 24 * 60 * 60 * 1000;
     }
     return diff / (60 * 60 * 1000);
-  } catch (e) {
+  } catch {
     return 0; // Devuelve 0 si las horas no son válidas
   }
 };
-
 
 // --- Componente Principal ---
 
@@ -143,17 +122,13 @@ const ScheduleView = () => {
                 </div>
                 {weekDays.map(day => {
                   const dayFormatted = formatDate(day);
-                  const [{ isOver }, drop] = useDrop(() => ({
-                    accept: 'shift',
-                    drop: (item) => handleDrop(item.id, employee.id, dayFormatted),
-                    collect: (monitor) => ({ isOver: monitor.isOver() }),
-                  }));
-
                   return (
-                    <div
+                    <DayCell
                       key={`${employee.id}-${dayFormatted}`}
-                      ref={drop}
-                      className={`p-2 border border-gray-200 rounded-md min-h-[80px] ${isOver ? 'bg-green-100' : ''}`}>
+                      employee={employee}
+                      day={day}
+                      handleDrop={handleDrop}
+                    >
                       {employeeShifts
                         .filter(shift => shift.day === dayFormatted)
                         .map(shift => {
@@ -170,7 +145,7 @@ const ScheduleView = () => {
                             />
                           );
                         })}
-                    </div>
+                    </DayCell>
                   );
                 })}
                 <div className="font-bold text-center p-2 bg-green-100 text-green-800 rounded-md flex items-center justify-center">

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import UserForm from './UserForm';
-import { useAppContext } from '../context/AppContext'; // Import useAppContext
+import { useAppContext } from '../context/useAppContext'; // Import useAppContext
 
 const UserManagement = () => { // Removed props
-  const { employees, addEmployee, updateEmployee, deleteEmployee } = useAppContext(); // Get from context
+  const { employees, deleteEmployee } = useAppContext(); // Get from context
   const [isFormOpen, setIsFormOpen] = useState(false); // Fixed typo
   const [editingUser, setEditingUser] = useState(null);
 
