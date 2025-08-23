@@ -56,23 +56,49 @@ Mejorar la estructura y robustez del código.
 
 El objetivo es expandir la aplicación para que tenga vistas y permisos diferentes según el rol del usuario.
 
-*   **Sugerencia 7: Simular Autenticación y Roles.**
+*   **Sugerencia 7: Simular Autenticación y Roles. [HECHO]**
     *   **Por qué:** Es el primer paso para poder diferenciar entre un administrador y un empleado.
     *   **Cómo:**
         1.  Añadir un campo `role` ('admin' o 'employee') a los datos de los empleados en `mockData.js`.
         2.  Crear una pantalla de "login" simple para seleccionar un usuario.
         3.  Manejar el estado del `currentUser` en `AppContext`.
 
-*   **Sugerencia 8: Crear Vistas Separadas con Rutas.**
+*   **Sugerencia 8: Crear Vistas Separadas con Rutas. [HECHO]**
     *   **Por qué:** Para que cada rol tenga su propia URL y vista dedicada.
     *   **Cómo:**
         1.  Usar `react-router-dom` para definir las rutas: `/`, `/admin/schedule`, `/admin/users`, `/employee/dashboard`.
         2.  El componente `App.jsx` se convertirá en el enrutador principal.
 
-*   **Sugerencia 9: Implementar el Panel de Administrador.**
+*   **Sugerencia 9: Implementar el Panel de Administrador. [HECHO]**
     *   **Por qué:** Para consolidar las vistas de gestión existentes.
     *   **Cómo:** Reutilizar `ScheduleView` y `UserManagement` dentro de un layout de administrador accesible a través de las rutas `/admin/*`.
 
-*   **Sugerencia 10: Implementar el Panel de Empleado.**
+*   **Sugerencia 10: Implementar el Panel de Empleado. [HECHO]**
     *   **Por qué:** Para que los empleados tengan una vista simplificada y personal.
     *   **Cómo:** Crear un nuevo componente `EmployeeDashboard.jsx` que muestre solo los turnos del usuario actual en modo de solo lectura.
+
+### Fase 3: Funcionalidades Avanzadas
+
+*   **Sugerencia 11: Notificaciones en Tiempo Real.**
+    *   **Por qué:** Para que los empleados reciban notificaciones instantáneas cuando se les asigne o modifique un turno.
+    *   **Cómo:** Integrar una librería como `react-toastify` para mostrar notificaciones no intrusivas.
+
+*   **Sugerencia 12: Exportar Horarios (PDF/CSV).**
+    *   **Por qué:** Permitir a los administradores exportar la vista semanal a formatos estándar.
+    *   **Cómo:** Usar librerías como `jspdf` y `react-csv`.
+
+*   **Sugerencia 13: Búsqueda y Filtros Avanzados.**
+    *   **Por qué:** Facilitar la localización de información específica en la vista de horarios.
+    *   **Cómo:** Añadir campos de búsqueda y filtros en `ScheduleView`.
+
+*   **Sugerencia 14: Pruebas Unitarias y de Integración.**
+    *   **Por qué:** Asegurar la calidad y estabilidad del código a largo plazo.
+    *   **Cómo:** Implementar `Jest` y `React Testing Library` para los componentes y lógica clave.
+
+*   **Sugerencia 15: Conexión a un Backend Real.**
+    *   **Por qué:** Reemplazar los datos locales para tener persistencia y una aplicación multiusuario real.
+    *   **Cómo:** Crear un backend (Node.js/Express) con una base de datos (MongoDB/PostgreSQL).
+
+*   **Sugerencia 16: Optimización del Rendimiento.**
+    *   **Por qué:** Mantener la aplicación rápida a medida que los datos crecen.
+    *   **Cómo:** Usar `React.memo` y optimizar los cálculos en el contexto.

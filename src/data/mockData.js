@@ -1,9 +1,9 @@
 export const employees = [
-  { id: 'emp1', name: 'Lucía García', role: 'Camarero', color: '#FF6B6B', access: 'admin' },
-  { id: 'emp2', name: 'Pedro Sánchez', role: 'Cocinero', color: '#4ECDC4', access: 'employee' },
-  { id: 'emp3', name: 'Ana López', role: 'Jefe de Sala', color: '#45B7D1', access: 'employee' },
-  { id: 'emp4', name: 'Carlos Ruiz', role: 'Barman', color: '#FED766', access: 'employee' },
-  { id: 'emp5', name: 'Elena Martín', role: 'Ayudante de Cocina', color: '#28B463', access: 'employee' },
+  { id: 'emp1', name: 'Lucía García', role: 'admin', color: '#FF6B6B' },
+  { id: 'emp2', name: 'Pedro Sánchez', role: 'employee', color: '#4ECDC4' },
+  { id: 'emp3', name: 'Ana López', role: 'employee', color: '#45B7D1' },
+  { id: 'emp4', name: 'Carlos Ruiz', role: 'employee', color: '#FED766' },
+  { id: 'emp5', name: 'Elena Martín', role: 'employee', color: '#28B463' },
 ];
 
 export const shifts = [

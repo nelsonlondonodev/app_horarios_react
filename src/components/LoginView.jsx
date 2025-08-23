@@ -1,29 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../context/useAppContext';
 
 const LoginView = () => {
   const { employees, login } = useAppContext();
+  const [selectedUserId, setSelectedUserId] = useState('');
+
+  const handleLogin = () => {
+    if (selectedUserId) {
+      login(selectedUserId);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
-      <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">¿Quién está iniciando sesión?</h2>
-        <div className="space-y-4">
-          {employees.map((employee) => (
-            <button
-              key={employee.id}
-              onClick={() => login(employee.id)}
-              className="w-full flex items-center p-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
-            >
-              <span 
-                className="w-8 h-8 rounded-full mr-4"
-                style={{ backgroundColor: employee.color, border: '2px solid white' }}
-              ></span>
-              <span className="text-lg font-medium text-gray-700">{employee.name}</span>
-              <span className="ml-auto text-sm font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-800">{employee.access}</span>
-            </button>
-          ))}
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="p-8 bg-white rounded-lg shadow-md w-96">
+        <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Iniciar Sesión</h2>
+        <div className="mb-4">
+          <label htmlFor="user-select" className="block mb-2 text-sm font-medium text-gray-600">
+            Selecciona tu usuario
+          </label>
+          <select
+            id="user-select"
+            value={selectedUserId}
+            onChange={(e) => setSelectedUserId(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="" disabled>
+              Elige un empleado
+            </option>
+            {employees.map((emp) => (
+              <option key={emp.id} value={emp.id}>
+                {emp.name}
+              </option>
+            ))}
+          </select>
         </div>
+        <button
+          onClick={handleLogin}
+          disabled={!selectedUserId}
+          className="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          Entrar
+        </button>
       </div>
     </div>
   );
