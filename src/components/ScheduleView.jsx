@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { CSVLink } from 'react-csv';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { useAppContext } from '../context/useAppContext';
 import ShiftCard from './ShiftCard';
 import Modal from './Modal';
@@ -115,7 +115,7 @@ const ScheduleView = () => {
   const exportToPdf = () => {
     const doc = new jsPDF();
     doc.text(`Horarios para la semana del ${startOfWeek.toLocaleDateString('es-ES')}`, 14, 16);
-    doc.autoTable({
+    autoTable(doc, {
       head: [['Empleado', ...weekDays.map(d => d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })), 'Total Horas']],
       body: filteredEmployees.map(employee => {
         let totalHours = 0;
