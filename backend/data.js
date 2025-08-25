@@ -1,4 +1,4 @@
-export const employees = [
+const employees = [
   { id: 'emp1', name: 'Lucía García', role: 'admin', color: '#FF6B6B' },
   { id: 'emp2', name: 'Pedro Sánchez', role: 'employee', color: '#4ECDC4' },
   { id: 'emp3', name: 'Ana López', role: 'employee', color: '#45B7D1' },
@@ -6,7 +6,7 @@ export const employees = [
   { id: 'emp5', name: 'Elena Martín', role: 'employee', color: '#28B463' },
 ];
 
-export const shifts = [
+const shifts = [
   // Lunes
   { id: 'sh1', employeeId: 'emp1', day: '2025-08-18', startTime: '09:00', endTime: '17:00', type: 'Mañana', role: 'Camarero' },
   { id: 'sh2', employeeId: 'emp2', day: '2025-08-18', startTime: '10:00', endTime: '18:00', type: 'Mañana', role: 'Cocinero' },
@@ -49,3 +49,5 @@ export const shifts = [
   { id: 'sh27', employeeId: 'emp2', day: '2025-08-24', startTime: '17:00', endTime: '01:00', type: 'Tarde', role: 'Cocinero' },
   { id: 'sh28', employeeId: 'emp3', day: '2025-08-24', startTime: '18:00', endTime: '02:00', type: 'Tarde', role: 'Jefe de Sala' },
 ];
+
+module.exports = { employees, shifts };

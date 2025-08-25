@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { shifts as mockShifts, employees as mockEmployees } from '../data/mockData';
+import { toast } from 'react-toastify';
 
 // 1. Crear el Contexto
 // eslint-disable-next-line react-refresh/only-export-components
@@ -8,18 +8,9 @@ export const AppContext = createContext();
 // 2. Crear el Proveedor del Contexto
 const AppProvider = ({ children }) => {
   // --- ESTADO --- //
-  const [shifts, setShifts] = useState(() => {
-    const savedShifts = localStorage.getItem('app_horarios_shifts');
-    return savedShifts ? JSON.parse(savedShifts) : mockShifts;
-  });
-
-  const [employees, setEmployees] = useState(() => {
-    const savedEmployees = localStorage.getItem('app_horarios_employees');
-    return savedEmployees ? JSON.parse(savedEmployees) : mockEmployees;
-  });
-
+  const [shifts, setShifts] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const [currentUser, setCurrentUser] = useState(() => {
     const savedUser = localStorage.getItem('app_horarios_currentUser');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -27,12 +18,14 @@ const AppProvider = ({ children }) => {
 
   // --- EFECTOS --- //
   useEffect(() => {
-    localStorage.setItem('app_horarios_employees', JSON.stringify(employees));
-  }, [employees]);
+    fetch('http://localhost:3001/employees')
+      .then(res => res.json())
+      .then(data => setEmployees(data));
 
-  useEffect(() => {
-    localStorage.setItem('app_horarios_shifts', JSON.stringify(shifts));
-  }, [shifts]);
+    fetch('http://localhost:3001/shifts')
+      .then(res => res.json())
+      .then(data => setShifts(data));
+  }, []);
 
   useEffect(() => {
     if (currentUser) {
@@ -48,12 +41,15 @@ const AppProvider = ({ children }) => {
     const user = employees.find((emp) => emp.id === userId);
     if (user) {
       setCurrentUser(user);
+      toast.success(`¡Bienvenido, ${user.name}!`);
     } else {
+      toast.error("Error: Usuario no encontrado.");
       console.error("Intento de login con ID de usuario no válido:", userId);
     }
   };
 
   const logout = () => {
+    toast.info("Has cerrado sesión.");
     setCurrentUser(null);
   };
 
@@ -61,27 +57,33 @@ const AppProvider = ({ children }) => {
   // --- FUNCIONES DE NEGOCIO --- //
   const addShift = (newShift) => {
     setShifts((prevShifts) => [...prevShifts, newShift]);
+    toast.success("Turno añadido correctamente.");
   };
   const updateShift = (updatedShift) => {
     setShifts((prevShifts) =>
       prevShifts.map((shift) => (shift.id === updatedShift.id ? updatedShift : shift))
     );
+    toast.success("Turno actualizado correctamente.");
   };
   const deleteShift = (shiftId) => {
     setShifts((prevShifts) => prevShifts.filter((shift) => shift.id !== shiftId));
+    toast.info("Turno eliminado.");
   };
 
   const addEmployee = (newEmployee) => {
     setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
+    toast.success("Empleado añadido correctamente.");
   };
   const updateEmployee = (updatedEmployee) => {
     setEmployees((prevEmployees) =>
       prevEmployees.map((employee) => (employee.id === updatedEmployee.id ? updatedEmployee : employee))
     );
+    toast.success("Empleado actualizado correctamente.");
   };
   const deleteEmployee = (employeeId) => {
     setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.id !== employeeId));
     setShifts((prevShifts) => prevShifts.filter((shift) => shift.employeeId !== employeeId));
+    toast.info("Empleado eliminado.");
   };
 
   const goToPreviousWeek = () => {

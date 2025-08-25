@@ -1,4 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import { CSVLink } from 'react-csv';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { useAppContext } from '../context/useAppContext';
 import ShiftCard from './ShiftCard';
 import Modal from './Modal';
@@ -38,6 +41,8 @@ const ScheduleView = () => {
   const [selectedShift, setSelectedShift] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingShift, setEditingShift] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
 
   const startOfWeek = useMemo(() => getStartOfWeek(currentDate), [currentDate]);
   const weekDays = useMemo(() => getWeekDays(startOfWeek), [startOfWeek]);
@@ -46,6 +51,14 @@ const ScheduleView = () => {
   const filteredShifts = useMemo(() => {
     return shifts.filter(shift => weekDaysFormatted.includes(shift.day));
   }, [shifts, weekDaysFormatted]);
+
+  const filteredEmployees = useMemo(() => {
+    return employees.filter(emp => {
+      const nameMatch = emp.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const roleMatch = roleFilter === 'all' || emp.role === roleFilter;
+      return nameMatch && roleMatch;
+    });
+  }, [employees, searchTerm, roleFilter]);
 
   const employeeMap = useMemo(() => {
     return new Map(employees.map(emp => [emp.id, { name: emp.name, color: emp.color }]));
@@ -78,6 +91,53 @@ const ScheduleView = () => {
     setShifts(updatedShifts);
   };
 
+  const getCsvData = () => {
+    const headers = ['Empleado', ...weekDays.map(d => d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })), 'Total Horas'];
+    const data = filteredEmployees.map(employee => {
+      const row = { Empleado: employee.name };
+      let totalHours = 0;
+      weekDays.forEach(day => {
+        const dayFormatted = formatDate(day);
+        const shift = filteredShifts.find(s => s.employeeId === employee.id && s.day === dayFormatted);
+        if (shift) {
+          row[day.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })] = `${shift.startTime} - ${shift.endTime}`;
+          totalHours += calculateHours(shift.startTime, shift.endTime);
+        } else {
+          row[day.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })] = '-';
+        }
+      });
+      row['Total Horas'] = totalHours.toFixed(2);
+      return row;
+    });
+    return [headers, ...data.map(Object.values)];
+  };
+
+  const exportToPdf = () => {
+    const doc = new jsPDF();
+    doc.text(`Horarios para la semana del ${startOfWeek.toLocaleDateString('es-ES')}`, 14, 16);
+    doc.autoTable({
+      head: [['Empleado', ...weekDays.map(d => d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' })), 'Total Horas']],
+      body: filteredEmployees.map(employee => {
+        let totalHours = 0;
+        const row = [employee.name];
+        weekDays.forEach(day => {
+          const dayFormatted = formatDate(day);
+          const shift = filteredShifts.find(s => s.employeeId === employee.id && s.day === dayFormatted);
+          if (shift) {
+            row.push(`${shift.startTime} - ${shift.endTime}`);
+            totalHours += calculateHours(shift.startTime, shift.endTime);
+          } else {
+            row.push('-');
+          }
+        });
+        row.push(totalHours.toFixed(2));
+        return row;
+      }),
+      startY: 20,
+    });
+    doc.save(`horarios-semana-${formatDate(startOfWeek)}.pdf`);
+  };
+
   return (
     <div className="bg-white shadow p-6 rounded-lg">
       <div className="flex justify-between items-center mb-4">
@@ -92,12 +152,47 @@ const ScheduleView = () => {
         </button>
       </div>
 
-      <button
-        onClick={() => openForm()}
-        className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Añadir Nuevo Turno
-      </button>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Buscar empleado..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="all">Todos los roles</option>
+            <option value="admin">Admin</option>
+            <option value="employee">Empleado</option>
+          </select>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => openForm()}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Añadir Nuevo Turno
+          </button>
+          <CSVLink
+            data={getCsvData()}
+            filename={`horarios-semana-${formatDate(startOfWeek)}.csv`}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Exportar a CSV
+          </CSVLink>
+          <button
+            onClick={exportToPdf}
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Exportar a PDF
+          </button>
+        </div>
+      </div>
 
       <div className="overflow-x-auto">
         <div className="grid grid-cols-9 gap-4">
@@ -111,7 +206,7 @@ const ScheduleView = () => {
            <div className="font-bold text-center p-2 bg-green-200 text-green-800 rounded-md">Total Horas</div>
 
 
-          {employees.map(employee => {
+          {filteredEmployees.map(employee => {
             const employeeShifts = filteredShifts.filter(shift => shift.employeeId === employee.id);
             const totalHours = employeeShifts.reduce((acc, shift) => acc + calculateHours(shift.startTime, shift.endTime), 0);
 
