@@ -34,7 +34,8 @@ const AppRoutes = () => {
         element={
           <AdminLayout>
             <Routes>
-              <Route path="schedule" element={<ScheduleView />} />
+              {/* <Route path="schedule" element={<ScheduleView />} /> */}
+              <Route path="schedule" element={<div>Vista de Horarios (en construcción)</div>} />
               <Route path="users" element={<UserManagement />} />
               <Route path="*" element={<Navigate to="schedule" />} />
             </Routes>
