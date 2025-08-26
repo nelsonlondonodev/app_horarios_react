@@ -61,8 +61,15 @@ const ScheduleView = () => {
   }, [employees, searchTerm, roleFilter]);
 
   const employeeMap = useMemo(() => {
+    if (!employees) return new Map();
     return new Map(employees.map(emp => [emp.id, { name: emp.name, color: emp.color }]));
   }, [employees]);
+
+  // --- Renderizado Condicional ---
+  // Si los datos principales no están listos, no renderizar el calendario
+  if (!employees || !shifts) {
+    return <div className="text-center p-8">Cargando empleados y turnos...</div>;
+  }
 
   const openModal = (shift) => {
     setSelectedShift(shift);
